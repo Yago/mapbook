@@ -8,6 +8,7 @@
     "@fortawesome/fontawesome-free": "^5.7.2",
     "@storybook/react": "^5.0.2",
     "@storybook/theming": "^5.0.2",
+    "axios": "^0.18.0",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.11.2",
     "leaflet": "^1.4.0",

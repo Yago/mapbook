@@ -15,6 +15,13 @@ export default css`
     filter: drop-shadow(3px 3px 4px rgba(0, 0, 0, 0.5));
   }
 
+  .leaflet-fa-markers .feature-icon {
+    font-size: 18px;
+    left: 50%;
+    top: 15px;
+    transform: translateX(-50%);
+  }
+
   .popup-fixed {
     .leaflet-popup-tip-container {
       display: none;
@@ -32,6 +39,14 @@ export default css`
       width: 100%;
       height: auto;
       min-height: 95vh;
+      margin-top: 30px;
+
+      img {
+        display: inline-block;
+        width: 100%;
+        height: auto;
+        margin-top: 10px;
+      }
     }
 
     .leaflet-popup-close-button {

@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { jsx } from '@emotion/core'; // eslint-disable-line
 
@@ -15,11 +15,10 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-fa-markers/L.Icon.FontAwesome.js';
 import 'leaflet-fa-markers/L.Icon.FontAwesome.css';
 import '@fortawesome/fontawesome-free/css/all.css';
-import shadow from '../../assets/shadow.png';
 
 import styles, { popupStyles } from './Map.styles';
 
-// const popup = L.popup();
+import { airtableFetch } from '../../utils/airtable';
 
 const swissLayers = [
   'ch.swisstopo.swisstlm3d-wanderwege',
@@ -33,18 +32,46 @@ const swissLayers = [
 ];
 
 const Map = ({}) => {
-  const icon = L.icon.fontAwesome({
-    iconClasses: 'fas fa-hiking',
-    markerColor: '#4cd964',
-    iconColor: '#FFF',
-    markerPath:
-      'M16,0 C7.12871978,0 0,7.12592722 0,16 C0,24.8712802 16,46.5436775 16,46.5436775 C16,46.5436775 32,24.8712802 32,16 C32,7.12592722 24.8712802,0 16,0 Z',
-  });
+  const [points, setPoints] = useState([]);
+  if (points.length <= 0) {
+    airtableFetch('Points').then(data =>
+      setPoints(data.filter(i => i.fields.latitude !== undefined)),
+    );
+  }
+
+  const [icons, setIcons] = useState([]);
+  if (icons.length <= 0) {
+    airtableFetch('Categories').then(data =>
+      // data => console.log(data),
+      setIcons(
+        data
+          .filter(i => i.fields.name !== undefined)
+          .map(cat => {
+            const icon = L.icon.fontAwesome({
+              iconClasses: cat.fields.icon,
+              markerColor: cat.fields.background,
+              iconColor: cat.fields.color,
+              markerPath:
+                'M16,0 C7.12871978,0 0,7.12592722 0,16 C0,24.8712802 16,46.5436775 16,46.5436775 C16,46.5436775 32,24.8712802 32,16 C32,7.12592722 24.8712802,0 16,0 Z',
+            });
+
+            return {
+              id: cat.id,
+              icon,
+            };
+          }),
+      ),
+    );
+  }
+
+  const corner1 = L.latLng(45.7769477403, 6.02260949059);
+  const corner2 = L.latLng(47.8308275417, 10.4427014502);
+  const bounds = L.latLngBounds(corner2, corner1);
 
   return (
     <LeafletMap
-      center={[46.03294, 7.30789]}
-      zoom={15}
+      center={[46.57591, 7.84956]}
+      zoom={8}
       crs={L.CRS.EPSG3857}
       css={styles}
       continuousWorld={true}
@@ -62,29 +89,38 @@ const Map = ({}) => {
         detectRetina={true}
       />
       <Pane name="fixedPane" />
-      <Marker position={[46.03294, 7.30789]} icon={icon}>
-        <Popup
-          autoPan={true}
-          minWidth={window.innerWidth - 50}
-          maxHeight={window.innerHeight - 200}
-          minHeight={window.innerHeight - 200}
-          offset={[0, window.innerHeight / 2]}
-          // autoPanPaddingBottomRight={0}
-          keepInView
-          pane="fixedPane"
-          className="popup-fixed"
-        >
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dulce
-            amarum, leve asperum, prope longe, stare movere, quadratum rotundum.
-            Quid ergo aliud intellegetur nisi uti ne quae pars naturae
-            neglegatur? Quae quo sunt excelsiores, eo dant clariora indicia
-            naturae. Ergo id est convenienter naturae vivere, a natura
-            discedere. Nulla profecto est, quin suam vim retineat a primo ad
-            extremum. Duo Reges: constructio interrete.
-          </p>
-        </Popup>
-      </Marker>
+      {points.length > 0 &&
+        icons.length > 0 &&
+        points.map(point => (
+          <Marker
+            key={point.id}
+            position={[point.fields.latitude, point.fields.longitude]}
+            icon={icons.find(i => i.id === point.fields.category[0]).icon}
+          >
+            <Popup
+              autoPan={true}
+              minWidth={window.innerWidth - 50}
+              maxHeight={window.innerHeight - 200}
+              minHeight={window.innerHeight - 200}
+              offset={[0, window.innerHeight / 2]}
+              // keepInView
+              pane="fixedPane"
+              className="popup-fixed"
+            >
+              {point.fields.title && <h3>{point.fields.title}</h3>}
+              {point.fields.description && (
+                <div
+                  dangerouslySetInnerHTML={{ __html: point.fields.description }}
+                />
+              )}
+              {point.fields.images &&
+                point.fields.images.length > 0 &&
+                point.fields.images.map(img => (
+                  <img key={img.id} src={img.thumbnails.large.url} />
+                ))}
+            </Popup>
+          </Marker>
+        ))}
     </LeafletMap>
   );
 };
