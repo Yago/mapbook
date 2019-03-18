@@ -3,8 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/core": "^10.0.9",
+    "@emotion/styled": "^10.0.9",
+    "@storybook/react": "^5.0.2",
+    "@storybook/theming": "^5.0.2",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.11.2",
+    "leaflet": "^1.4.0",
+    "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
+    "react-leaflet": "^2.2.1",
     "react-scripts": "2.1.8"
   },
   "scripts": {
