@@ -8,22 +8,14 @@ export default css`
   left: 0;
 
   .leaflet-fixed-pane {
-    position: fixed !important;
-    z-index: 999999;
+    z-index: 800;
+  }
+
+  .marker-icon-svg svg {
+    filter: drop-shadow(3px 3px 4px rgba(0, 0, 0, 0.5));
   }
 
   .popup-fixed {
-    position: fixed;
-    /* top: 0 !important; */
-    /* bottom: 0 !important; */
-    /* left: 0 !important; */
-    /* right: 0 !important; */
-    /* width: 100vw; */
-    /* height: 100vh; */
-    /* transform: none !important; */
-    margin: 0;
-    border-radius: 0;
-
     .leaflet-popup-tip-container {
       display: none;
     }

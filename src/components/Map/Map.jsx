@@ -12,6 +12,10 @@ import {
   Pane,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet-fa-markers/L.Icon.FontAwesome.js';
+import 'leaflet-fa-markers/L.Icon.FontAwesome.css';
+import '@fortawesome/fontawesome-free/css/all.css';
+import shadow from '../../assets/shadow.png';
 
 import styles, { popupStyles } from './Map.styles';
 
@@ -29,14 +33,12 @@ const swissLayers = [
 ];
 
 const Map = ({}) => {
-  const icon = new L.Icon({
-    // shadowUrl: 'leaf-shadow.png',
-    iconUrl: 'https://leafletjs.com/examples/custom-icons/leaf-red.png',
-    iconSize: [38, 95],
-    shadowSize: [50, 64],
-    iconAnchor: [22, 94],
-    shadowAnchor: [4, 62],
-    popupAnchor: [-3, -76],
+  const icon = L.icon.fontAwesome({
+    iconClasses: 'fas fa-hiking',
+    markerColor: '#4cd964',
+    iconColor: '#FFF',
+    markerPath:
+      'M16,0 C7.12871978,0 0,7.12592722 0,16 C0,24.8712802 16,46.5436775 16,46.5436775 C16,46.5436775 32,24.8712802 32,16 C32,7.12592722 24.8712802,0 16,0 Z',
   });
 
   return (
@@ -47,14 +49,14 @@ const Map = ({}) => {
       css={styles}
       continuousWorld={true}
       worldCopyJump={false}
-      zoomSnap={false}
+      zoomSnap={true}
       zoomControl={false}
     >
-      {/* <TileLayer
+      <TileLayer
         url="https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg"
         detectRetina={true}
         maxZoom={18}
-      /> */}
+      />
       <TileLayer
         url="https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.swisstlm3d-wanderwege/default/current/3857/{z}/{x}/{y}.png"
         detectRetina={true}
