@@ -8,7 +8,6 @@ import {
   Map as LeafletMap,
   TileLayer,
   Marker,
-  Popup,
   Pane,
   LayersControl,
   LayerGroup,
@@ -19,6 +18,7 @@ import 'leaflet-fa-markers/L.Icon.FontAwesome.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 
 import styles, { popupStyles } from './Map.styles';
+import Popup from '../Popup';
 
 import { airtableFetch } from '../../utils/airtable';
 
@@ -69,7 +69,6 @@ const Map = ({}) => {
     <LeafletMap
       center={[46.57591, 7.84956]}
       zoom={8}
-      crs={L.CRS.EPSG3857}
       css={styles}
       continuousWorld={true}
       worldCopyJump={false}
@@ -78,6 +77,22 @@ const Map = ({}) => {
     >
       <Pane name="fixedPane" />
       <LayersControl position="bottomright" collapsed={true}>
+        {/* <LayersControl.BaseLayer name="Default base map" checked>
+          <TileLayer
+            url="http://localhost:9998/tiles/swiss_wonders/{z}/{x}/{y}.png"
+            detectRetina={true}
+            maxZoom={18}
+          />
+        </LayersControl.BaseLayer> */}
+        {/* https://openmaptiles.org/ */}
+        {/* http://a.tile.stamen.com/toner/${z}/${x}/${y}.png */}
+        <LayersControl.BaseLayer name="Default base map">
+          <TileLayer
+            url="http://tile.thunderforest.com/landscape/{z}/{x}/{y}.png"
+            detectRetina={true}
+            maxZoom={18}
+          />
+        </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="Swiss color map" checked>
           <TileLayer
             url="https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg"
@@ -112,30 +127,7 @@ const Map = ({}) => {
                           .icon
                       }
                     >
-                      <Popup
-                        autoPan={true}
-                        minWidth={window.innerWidth - 50}
-                        maxHeight={window.innerHeight - 200}
-                        minHeight={window.innerHeight - 200}
-                        offset={[0, window.innerHeight / 2]}
-                        pane="fixedPane"
-                        className="popup-fixed"
-                      >
-                        {point.fields.title && <h3>{point.fields.title}</h3>}
-                        {point.fields.description && (
-                          <div
-                            className="popup-desc"
-                            dangerouslySetInnerHTML={{
-                              __html: point.fields.description,
-                            }}
-                          />
-                        )}
-                        {point.fields.images &&
-                          point.fields.images.length > 0 &&
-                          point.fields.images.map(img => (
-                            <img key={img.id} src={img.thumbnails.large.url} />
-                          ))}
-                      </Popup>
+                      <Popup point={point} />
                     </Marker>
                   ))}
               </LayerGroup>
