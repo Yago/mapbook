@@ -10,21 +10,20 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 
 import styles from './MapGL.styles';
-import mapConfig from './map-config.json';
+import mapConfig from './map.config.json';
 import { actions as categoriesActions } from '../../store/categories';
 import { actions as pointsActions } from '../../store/points';
 
 const MapGL = ({
   categories,
-  fetchCategories,
   toggleCategoriesActive,
   points,
-  fetchPoints,
   togglePointActive,
 }) => {
   const map = useRef(null);
   mapboxgl.accessToken = 'undefined';
 
+  // Initiate Map
   useEffect(() => {
     map.current = new mapboxgl.Map({
       container: 'map',
@@ -32,16 +31,9 @@ const MapGL = ({
       center: [7.84956, 46.57591],
       zoom: 8,
     });
-
-    if (categories.collection.length <= 0) fetchCategories();
   }, []);
 
-  useEffect(() => {
-    if (points.collection.length <= 0 && categories.collection.length > 0) {
-      fetchPoints(categories);
-    }
-  }, [categories]);
-
+  // Update markers on Map when active state change
   useEffect(() => {
     if (points.collection.length > 0) {
       points.collection.forEach(point => {
@@ -54,10 +46,12 @@ const MapGL = ({
     }
   }, [points]);
 
+  // Switch base Map layer
   const switchBaseMap = id => {
     map.current.setStyle(mapConfig.styles[id]);
   };
 
+  // Start toggle active workflow for categories and points
   const toggleMarkers = category => {
     toggleCategoriesActive(category);
     togglePointActive(category);
@@ -92,10 +86,10 @@ MapGL.defaultProps = {};
 const mapState = ({ categories, points }) => ({ categories, points });
 
 const mapDispatch = dispatch => {
-  const { fetchCategories, toggleCategoriesActive } = categoriesActions;
-  const { fetchPoints, togglePointActive } = pointsActions;
+  const { toggleCategoriesActive } = categoriesActions;
+  const { togglePointActive } = pointsActions;
   return bindActionCreators(
-    { fetchCategories, toggleCategoriesActive, fetchPoints, togglePointActive },
+    { toggleCategoriesActive, togglePointActive },
     dispatch,
   );
 };
