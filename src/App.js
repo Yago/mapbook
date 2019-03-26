@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -12,7 +13,7 @@ const App = ({ categories, fetchCategories, points, fetchPoints }) => {
     if (categories.collection.length <= 0) fetchCategories();
   }, []);
 
-  // Get initial points collection
+  // Get initial points collection using categories collection
   useEffect(() => {
     if (points.collection.length <= 0 && categories.collection.length > 0) {
       fetchPoints(categories);
@@ -21,6 +22,14 @@ const App = ({ categories, fetchCategories, points, fetchPoints }) => {
 
   return <MapGL />;
 };
+
+App.propTypes = {
+  categories: PropTypes.object.isRequired,
+  fetchCategories: PropTypes.func.isRequired,
+  points: PropTypes.object.isRequired,
+  fetchPoints: PropTypes.func.isRequired,
+};
+App.defaultProps = {};
 
 const mapState = ({ categories, points }) => ({ categories, points });
 

@@ -80,7 +80,12 @@ const MapGL = ({
   );
 };
 
-MapGL.propTypes = {};
+MapGL.propTypes = {
+  categories: PropTypes.object.isRequired,
+  toggleCategoriesActive: PropTypes.func.isRequired,
+  points: PropTypes.object.isRequired,
+  togglePointActive: PropTypes.func.isRequired,
+};
 MapGL.defaultProps = {};
 
 const mapState = ({ categories, points }) => ({ categories, points });
