@@ -1,5 +1,7 @@
 /** @jsx jsx */
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { jsx } from '@emotion/core'; // eslint-disable-line
 import mapboxgl from 'mapbox-gl';
@@ -9,10 +11,17 @@ import '@fortawesome/fontawesome-free/css/all.css';
 
 import styles from './MapGL.styles';
 import mapConfig from './map-config.json';
-import marker from './map-components/marker';
-import { airtableFetch } from '../../utils/airtable';
+import { actions as categoriesActions } from '../../store/categories';
+import { actions as pointsActions } from '../../store/points';
 
-const MapGL = ({}) => {
+const MapGL = ({
+  categories,
+  fetchCategories,
+  toggleCategoriesActive,
+  points,
+  fetchPoints,
+  togglePointActive,
+}) => {
   const map = useRef(null);
   mapboxgl.accessToken = 'undefined';
 
@@ -23,65 +32,24 @@ const MapGL = ({}) => {
       center: [7.84956, 46.57591],
       zoom: 8,
     });
+
+    if (categories.collection.length <= 0) fetchCategories();
   }, []);
 
-  const [categories, setCategories] = useState([]);
-  if (categories.length <= 0) {
-    airtableFetch('Categories').then(data => {
-      const res = data
-        .filter(i => i.fields.name !== undefined)
-        .map(cat => {
-          cat.marker = marker(
-            cat.fields.color,
-            cat.fields.background,
-            cat.fields.icon,
-          );
-
-          cat.points = [];
-
-          return cat;
-        });
-      setCategories(res);
-    });
-  }
-
-  const [points, setPoints] = useState([]);
   useEffect(() => {
-    if (points.length <= 0 && categories.length > 0) {
-      airtableFetch('Points').then(data => {
-        const res = data
-          .filter(i => i.fields.latitude !== undefined)
-          .sort((a, b) => b.fields.latitude - a.fields.latitude)
-          .map(point => {
-            const cat = categories.find(i => i.id === point.fields.category[0]);
-
-            const el = document.createElement('div');
-            el.className = 'marker';
-            el.innerHTML = cat ? cat.marker : '';
-
-            // create the marker
-            const marker = new mapboxgl.Marker(el)
-              .setLngLat([point.fields.longitude, point.fields.latitude])
-              .setPopup(
-                new mapboxgl.Popup({ offset: 25 }).setText(`Sup ? ${point.id}`),
-              );
-
-            return {
-              ...point,
-              marker,
-              active: cat ? cat.fields.checked : false,
-            };
-          });
-
-        setPoints(res);
-      });
+    if (points.collection.length <= 0 && categories.collection.length > 0) {
+      fetchPoints(categories);
     }
   }, [categories]);
 
   useEffect(() => {
-    if (points.length > 0) {
-      points.forEach(point => {
-        if (point.active) point.marker.addTo(map.current);
+    if (points.collection.length > 0) {
+      points.collection.forEach(point => {
+        if (point.active) {
+          point.marker.addTo(map.current);
+        } else {
+          point.marker.remove();
+        }
       });
     }
   }, [points]);
@@ -90,15 +58,9 @@ const MapGL = ({}) => {
     map.current.setStyle(mapConfig.styles[id]);
   };
 
-  const toggleMarkers = id => {
-    points.forEach(point => {
-      if (point.fields.category[0] === id) point.active = !point.active;
-      if (point.active) {
-        point.marker.addTo(map.current);
-      } else {
-        point.marker.remove();
-      }
-    });
+  const toggleMarkers = category => {
+    toggleCategoriesActive(category);
+    togglePointActive(category);
   };
 
   return (
@@ -108,11 +70,16 @@ const MapGL = ({}) => {
         <button onClick={() => switchBaseMap('default')}>Default</button>
         <button onClick={() => switchBaseMap('swiss')}>Swiss topo</button>
         <hr />
-        {categories.length > 0 &&
-          categories.map(cat => (
-            <button key={cat.id} onClick={() => toggleMarkers(cat.id)}>
-              {cat.fields.name}
-            </button>
+        {categories.collection.length > 0 &&
+          categories.collection.map(item => (
+            <label key={item.id}>
+              <input
+                type="checkbox"
+                checked={item.active}
+                onChange={e => toggleMarkers(item)}
+              />
+              {item.fields.name}
+            </label>
           ))}
       </div>
     </div>
@@ -122,4 +89,18 @@ const MapGL = ({}) => {
 MapGL.propTypes = {};
 MapGL.defaultProps = {};
 
-export default MapGL;
+const mapState = ({ categories, points }) => ({ categories, points });
+
+const mapDispatch = dispatch => {
+  const { fetchCategories, toggleCategoriesActive } = categoriesActions;
+  const { fetchPoints, togglePointActive } = pointsActions;
+  return bindActionCreators(
+    { fetchCategories, toggleCategoriesActive, fetchPoints, togglePointActive },
+    dispatch,
+  );
+};
+
+export default connect(
+  mapState,
+  mapDispatch,
+)(MapGL);

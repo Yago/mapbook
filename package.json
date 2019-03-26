@@ -11,6 +11,7 @@
     "axios": "^0.18.0",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.11.2",
+    "immer": "^2.1.4",
     "leaflet": "^1.4.0",
     "leaflet-fa-markers": "^0.0.5",
     "mapbox-gl": "^0.53.1",
@@ -18,7 +19,11 @@
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-leaflet": "^2.2.1",
-    "react-scripts": "2.1.8"
+    "react-redux": "^6.0.1",
+    "react-scripts": "2.1.8",
+    "redux": "^4.0.1",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-thunk": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",

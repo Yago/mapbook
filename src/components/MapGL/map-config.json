@@ -21,6 +21,27 @@
           "maxzoom": 22
         }
       ]
+    },
+    "wonders" : {
+      "version": 8,
+      "sources": {
+        "wonders-map": {
+          "type": "raster",
+          "tiles": [
+            "http://localhost:9998/tiles/swiss_wonders/{z}/{x}/{y}.png"
+          ],
+          "tileSize": 128
+        }
+      },
+      "layers": [
+        {
+          "id": "wonders-map",
+          "type": "raster",
+          "source": "wonders-map",
+          "minzoom": 0,
+          "maxzoom": 22
+        }
+      ]
     }
   }
 }
