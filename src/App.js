@@ -2,10 +2,21 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import lightGreen from '@material-ui/core/colors/lightGreen';
+import '@fortawesome/fontawesome-free/css/all.css';
 
 import MapGL from './components/MapGL';
+import CategoryDial from './components/CategoryDial';
 import { actions as categoriesActions } from './store/categories';
 import { actions as pointsActions } from './store/points';
+
+const muiTheme = createMuiTheme({
+  palette: {
+    primary: { main: '#304ffe' },
+    secondary: lightGreen,
+  },
+});
 
 const App = ({ categories, fetchCategories, points, fetchPoints }) => {
   // Get initial categories collection
@@ -20,7 +31,12 @@ const App = ({ categories, fetchCategories, points, fetchPoints }) => {
     }
   }, [categories]);
 
-  return <MapGL />;
+  return (
+    <MuiThemeProvider theme={muiTheme}>
+      <CategoryDial />
+      <MapGL />
+    </MuiThemeProvider>
+  );
 };
 
 App.propTypes = {

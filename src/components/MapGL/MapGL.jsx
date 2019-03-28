@@ -7,19 +7,11 @@ import { jsx } from '@emotion/core'; // eslint-disable-line
 import mapboxgl from 'mapbox-gl';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
-import '@fortawesome/fontawesome-free/css/all.css';
 
 import styles from './MapGL.styles';
 import mapConfig from './map.config.json';
-import { actions as categoriesActions } from '../../store/categories';
-import { actions as pointsActions } from '../../store/points';
 
-const MapGL = ({
-  categories,
-  toggleCategoriesActive,
-  points,
-  togglePointActive,
-}) => {
+const MapGL = ({ categories, points }) => {
   const map = useRef(null);
   mapboxgl.accessToken = 'undefined';
 
@@ -51,30 +43,12 @@ const MapGL = ({
     map.current.setStyle(mapConfig.styles[id]);
   };
 
-  // Start toggle active workflow for categories and points
-  const toggleMarkers = category => {
-    toggleCategoriesActive(category);
-    togglePointActive(category);
-  };
-
   return (
     <div css={styles}>
       <div id="map" className="map" />
       <div className="menu">
         <button onClick={() => switchBaseMap('default')}>Default</button>
         <button onClick={() => switchBaseMap('swiss')}>Swiss topo</button>
-        <hr />
-        {categories.collection.length > 0 &&
-          categories.collection.map(item => (
-            <label key={item.id}>
-              <input
-                type="checkbox"
-                checked={item.active}
-                onChange={e => toggleMarkers(item)}
-              />
-              {item.fields.name}
-            </label>
-          ))}
       </div>
     </div>
   );
@@ -82,24 +56,10 @@ const MapGL = ({
 
 MapGL.propTypes = {
   categories: PropTypes.object.isRequired,
-  toggleCategoriesActive: PropTypes.func.isRequired,
   points: PropTypes.object.isRequired,
-  togglePointActive: PropTypes.func.isRequired,
 };
 MapGL.defaultProps = {};
 
 const mapState = ({ categories, points }) => ({ categories, points });
 
-const mapDispatch = dispatch => {
-  const { toggleCategoriesActive } = categoriesActions;
-  const { togglePointActive } = pointsActions;
-  return bindActionCreators(
-    { toggleCategoriesActive, togglePointActive },
-    dispatch,
-  );
-};
-
-export default connect(
-  mapState,
-  mapDispatch,
-)(MapGL);
+export default connect(mapState)(MapGL);

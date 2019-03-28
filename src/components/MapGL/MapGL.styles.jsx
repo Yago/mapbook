@@ -36,4 +36,8 @@ export default css`
     background: white;
     transform: none !important;
   }
+
+  .mapboxgl-ctrl-attrib {
+    display: none;
+  }
 `;
