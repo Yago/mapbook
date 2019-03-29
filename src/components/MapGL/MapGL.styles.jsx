@@ -9,15 +9,6 @@ export default css`
     left: 0;
   }
 
-  .menu {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 200;
-    background: white;
-    padding: 2rem;
-  }
-
   .marker [class*='fa'] {
     position: absolute;
     left: 50%;

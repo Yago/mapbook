@@ -1,0 +1,75 @@
+{
+  "styles": {
+    "basemap": "https://maps.tilehosting.com/c/f8fe32e5-7af0-442c-818d-d5b64790bf6b/styles/outdoor-98f1c/style.json?key=2T3bgrAcefDwjt6X77dl",
+    "swisstopo" : {
+      "version": 8,
+      "sources": {
+        "swiss-topo": {
+          "type": "raster",
+          "tiles": [
+            "https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg"
+          ],
+          "tileSize": 128
+        },
+        "swiss-pedestrian": {
+          "type": "raster",
+          "tiles": [
+            "https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.swisstlm3d-wanderwege/default/current/3857/{z}/{x}/{y}.png"
+          ],
+          "tileSize": 128
+        }
+      },
+      "layers": [
+        {
+          "id": "swiss-topo",
+          "type": "raster",
+          "source": "swiss-topo",
+          "minzoom": 0,
+          "maxzoom": 22
+        },
+        {
+          "id": "swiss-pedestrian",
+          "type": "raster",
+          "source": "swiss-pedestrian",
+          "minzoom": 10,
+          "maxzoom": 22
+        }
+      ]
+    },
+    "satelite" : {
+      "version": 8,
+      "sources": {
+        "satelite-map": {
+          "type": "raster",
+          "tiles": [
+            "https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg"
+          ],
+          "tileSize": 128
+        },
+        "swiss-pedestrian": {
+          "type": "raster",
+          "tiles": [
+            "https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.swisstlm3d-wanderwege/default/current/3857/{z}/{x}/{y}.png"
+          ],
+          "tileSize": 128
+        }
+      },
+      "layers": [
+        {
+          "id": "satelite-map",
+          "type": "raster",
+          "source": "satelite-map",
+          "minzoom": 0,
+          "maxzoom": 22
+        },
+        {
+          "id": "swiss-pedestrian",
+          "type": "raster",
+          "source": "swiss-pedestrian",
+          "minzoom": 10,
+          "maxzoom": 22
+        }
+      ]
+    }
+  }
+}

@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -9,19 +9,21 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 import styles from './MapGL.styles';
-import mapConfig from './map.config.json';
+import mapConfig from '../../config/map.config.json';
 
-const MapGL = ({ categories, points }) => {
+const MapGL = ({ categories, interactions, points }) => {
   const map = useRef(null);
+  const [currentLayer, setCurrentLayer] = useState('');
   mapboxgl.accessToken = 'undefined';
 
   // Initiate Map
   useEffect(() => {
+    setCurrentLayer(interactions.currentLayer);
     map.current = new mapboxgl.Map({
       container: 'map',
-      style: mapConfig.styles['default'],
+      style: mapConfig.styles[interactions.currentLayer],
       center: [7.84956, 46.57591],
-      zoom: 8,
+      zoom: 7,
     });
 
     const nav = new mapboxgl.NavigationControl({
@@ -52,17 +54,16 @@ const MapGL = ({ categories, points }) => {
   }, [points]);
 
   // Switch base Map layer
-  const switchBaseMap = id => {
-    map.current.setStyle(mapConfig.styles[id]);
-  };
+  useEffect(() => {
+    if (interactions.currentLayer !== currentLayer) {
+      map.current.setStyle(mapConfig.styles[interactions.currentLayer]);
+      setCurrentLayer(interactions.currentLayer);
+    }
+  }, [interactions]);
 
   return (
     <div css={styles}>
       <div id="map" className="map" />
-      {/* <div className="menu">
-        <button onClick={() => switchBaseMap('default')}>Default</button>
-        <button onClick={() => switchBaseMap('swiss')}>Swiss topo</button>
-      </div> */}
     </div>
   );
 };
@@ -73,6 +74,10 @@ MapGL.propTypes = {
 };
 MapGL.defaultProps = {};
 
-const mapState = ({ categories, points }) => ({ categories, points });
+const mapState = ({ categories, interactions, points }) => ({
+  categories,
+  interactions,
+  points,
+});
 
 export default connect(mapState)(MapGL);

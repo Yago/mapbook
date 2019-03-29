@@ -8,6 +8,7 @@ import '@fortawesome/fontawesome-free/css/all.css';
 
 import MapGL from './components/MapGL';
 import CategoryDial from './components/CategoryDial';
+import LayerDial from './components/LayerDial';
 import { actions as categoriesActions } from './store/categories';
 import { actions as pointsActions } from './store/points';
 
@@ -33,6 +34,7 @@ const App = ({ categories, fetchCategories, points, fetchPoints }) => {
 
   return (
     <MuiThemeProvider theme={muiTheme}>
+      <LayerDial />
       <CategoryDial />
       <MapGL />
     </MuiThemeProvider>
