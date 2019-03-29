@@ -9,9 +9,9 @@ export default css`
   > button {
     opacity: 0;
   }
+`;
 
-  [class^='MuiAvatar'] {
-    width: 50px;
-    height: 50px;
-  }
+export const avatarCSS = css`
+  width: 50px !important;
+  height: 50px !important;
 `;

@@ -38,6 +38,8 @@ const MapGL = ({ categories, interactions, points }) => {
         trackUserLocation: true,
       }),
     );
+
+    map.current.on('load', () => map.current.resize());
   }, []);
 
   // Update markers on Map when active state change
@@ -63,7 +65,17 @@ const MapGL = ({ categories, interactions, points }) => {
 
   return (
     <div css={styles}>
-      <div id="map" className="map" />
+      <div
+        id="map"
+        className="map"
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+        }}
+      />
     </div>
   );
 };

@@ -8,7 +8,7 @@ import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import Avatar from '@material-ui/core/Avatar';
 
-import styles from './LayerDial.styles';
+import styles, { avatarCSS } from './LayerDial.styles';
 import mapConfig from '../../config/map.config.json';
 import { actions as interactionsActions } from '../../store/interactions';
 
@@ -47,7 +47,8 @@ const LayerDial = ({ interactions, setLayer }) => {
               css={layer === interactions.currentLayer && actionCSS}
               ButtonProps={{ size: 'large' }}
               tooltipTitle={layer}
-              icon={<Avatar alt="Remy Sharp" src={images[layer]} />}
+              tooltipPlacement="top"
+              icon={<Avatar css={avatarCSS} src={images[layer]} />}
               onClick={() => setLayer(layer)}
             />
           );

@@ -45,7 +45,14 @@ const CategoryDial = ({
     >
       {categories.collection.length > 0 &&
         categories.collection.map(item => {
-          const actionCSS = css`
+          const defaultCSS = css`
+            background: #212121 !important;
+            [class^='fa'] {
+              color: #fafafa;
+            }
+          `;
+
+          const activeCSS = css`
             background: ${item.fields.background} !important;
             [class^='fa'] {
               color: ${item.fields.color};
@@ -55,7 +62,7 @@ const CategoryDial = ({
           return (
             <SpeedDialAction
               key={item.id}
-              css={item.active && actionCSS}
+              css={item.active ? activeCSS : defaultCSS}
               tooltipTitle={item.fields.name}
               icon={<span className={item.fields.icon} />}
               onClick={() => toggleMarkers(item)}
