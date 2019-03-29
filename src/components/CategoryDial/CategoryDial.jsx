@@ -8,6 +8,7 @@ import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 
 import { actions as categoriesActions } from '../../store/categories';
+import { actions as interactionsActions } from '../../store/interactions';
 import { actions as pointsActions } from '../../store/points';
 import styles from './CategoryDial.styles';
 
@@ -16,9 +17,9 @@ const CategoryDial = ({
   toggleCategoriesActive,
   points,
   togglePointActive,
+  interactions,
+  toggleDial,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   // Start toggle active workflow for categories and points
   const toggleMarkers = category => {
     toggleCategoriesActive(category);
@@ -28,17 +29,17 @@ const CategoryDial = ({
   return (
     <SpeedDial
       css={styles}
-      onClick={() => setIsOpen(!isOpen)}
+      onClick={() => toggleDial()}
       ariaLabel="SpeedDial openIcon example"
       ButtonProps={{ color: 'primary' }}
       hidden={false}
       direction="up"
-      open={isOpen}
+      open={interactions.isDialOpen}
       icon={
-        isOpen ? (
+        interactions.isDialOpen ? (
           <span className="fas fa-times" />
         ) : (
-          <span className="fas fa-map-marked-alt" />
+          <span className="fas fa-layer-group" />
         )
       }
     >
@@ -68,13 +69,18 @@ const CategoryDial = ({
 CategoryDial.propTypes = {};
 CategoryDial.defaultProps = {};
 
-const mapState = ({ categories, points }) => ({ categories, points });
+const mapState = ({ categories, points, interactions }) => ({
+  categories,
+  points,
+  interactions,
+});
 
 const mapDispatch = dispatch => {
   const { toggleCategoriesActive } = categoriesActions;
   const { togglePointActive } = pointsActions;
+  const { toggleDial } = interactionsActions;
   return bindActionCreators(
-    { toggleCategoriesActive, togglePointActive },
+    { toggleCategoriesActive, togglePointActive, toggleDial },
     dispatch,
   );
 };
