@@ -28,7 +28,19 @@ export const fetchPoints = categories => {
           const marker = new mapboxgl.Marker(el)
             .setLngLat([point.fields.longitude, point.fields.latitude])
             .setPopup(
-              new mapboxgl.Popup({ offset: 25 }).setText(`Sup ? ${point.id}`),
+              new mapboxgl.Popup({ offset: 25 }).setHTML(`
+                <div class="mapboxgl-popup-content-inner">
+                  ${point.fields.title ? `<h2>${point.fields.title}</h2>` : ''}
+                  ${point.fields.description || ''}
+                  ${
+                    point.fields.images && point.fields.images.length > 0
+                      ? point.fields.images.map(
+                          img => `<img src="${img.thumbnails.large.url}" />`,
+                        )
+                      : ''
+                  }
+                </div>
+              `),
             );
 
           return {
