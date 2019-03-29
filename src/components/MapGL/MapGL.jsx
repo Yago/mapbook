@@ -23,6 +23,19 @@ const MapGL = ({ categories, points }) => {
       center: [7.84956, 46.57591],
       zoom: 8,
     });
+
+    const nav = new mapboxgl.NavigationControl({
+      showZoom: false,
+    });
+    map.current.addControl(nav, 'top-right');
+    map.current.addControl(
+      new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true,
+        },
+        trackUserLocation: true,
+      }),
+    );
   }, []);
 
   // Update markers on Map when active state change
@@ -46,10 +59,10 @@ const MapGL = ({ categories, points }) => {
   return (
     <div css={styles}>
       <div id="map" className="map" />
-      <div className="menu">
+      {/* <div className="menu">
         <button onClick={() => switchBaseMap('default')}>Default</button>
         <button onClick={() => switchBaseMap('swiss')}>Swiss topo</button>
-      </div>
+      </div> */}
     </div>
   );
 };
