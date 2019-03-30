@@ -1,5 +1,7 @@
 import mapboxgl from 'mapbox-gl';
 import localforage from 'localforage';
+import { OpenLocationCode } from 'open-location-code';
+
 import { airtableFetch } from '../../utils/airtable';
 
 export const SET_POINTS = 'SET_POINTS';
@@ -10,12 +12,19 @@ const createMarker = (point, category) => {
   el.className = 'marker';
   el.innerHTML = category ? category.marker : '';
 
+  const openLocation = new OpenLocationCode();
+  const plusCode = openLocation.encode(
+    point.fields.latitude,
+    point.fields.longitude,
+  );
+
   return new mapboxgl.Marker(el)
     .setLngLat([point.fields.longitude, point.fields.latitude])
     .setPopup(
       new mapboxgl.Popup({ offset: 25 }).setHTML(`
       <div class="mapboxgl-popup-content-inner">
         ${point.fields.title ? `<h2>${point.fields.title}</h2>` : ''}
+        <pre>${plusCode}</pre>
         ${point.fields.description || ''}
         ${
           point.fields.images && point.fields.images.length > 0
@@ -46,7 +55,8 @@ export const fetchPoints = categories => {
         return point;
       });
 
-      if (!err && payload.length > 0) dispatch(setPoints(payload));
+      if (!err && payload !== null && payload.length > 0)
+        dispatch(setPoints(payload));
     });
 
     airtableFetch('Points').then(data => {

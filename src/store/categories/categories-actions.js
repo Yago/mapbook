@@ -14,7 +14,8 @@ export const fetchCategories = isOpen => {
   return dispatch => {
     localforage.getItem('categories', (err, value) => {
       const payload = JSON.parse(value);
-      if (!err && payload.length > 0) dispatch(setCategories(payload));
+      if (!err && payload !== null && payload.length > 0)
+        dispatch(setCategories(payload));
     });
 
     airtableFetch('Categories').then(data => {
