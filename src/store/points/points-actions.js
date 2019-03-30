@@ -38,7 +38,7 @@ export const fetchPoints = categories => {
   return dispatch => {
     localforage.getItem('points', (err, value) => {
       const payload = JSON.parse(value).map(item => {
-        const point = { ...item };
+        const point = { ...item, marker: null };
         const category = categories.collection.find(
           i => i.id === point.fields.category[0],
         );
@@ -57,6 +57,7 @@ export const fetchPoints = categories => {
           const category = categories.collection.find(
             i => i.id === point.fields.category[0],
           );
+          point.marker = null;
 
           // create the marker
           const marker = createMarker(point, category);

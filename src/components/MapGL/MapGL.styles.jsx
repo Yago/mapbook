@@ -14,12 +14,24 @@ export default css`
   .mapboxgl-popup {
     position: absolute;
     z-index: 9999;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    top: 30px;
+    bottom: 30px;
+    left: 50%;
+    width: 600px;
+    padding: 30px;
     background: white;
-    transform: none !important;
+    transform: translateX(-50%) !important;
+    box-shadow: 0 0 15px -1px rgba(0, 0, 0, 0.4);
+
+    @media only screen and (max-width: 767px) {
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      transform: none !important;
+      padding: 0;
+      width: 100%;
+    }
   }
 
   .mapboxgl-popup-content {
@@ -30,6 +42,10 @@ export default css`
     box-shadow: none;
     font-size: 16px;
     font-family: 'Noto Sans', Helvetica, Arial, sans-serif;
+
+    h2:first-child {
+      padding-right: 70px;
+    }
 
     h2,
     h3,
