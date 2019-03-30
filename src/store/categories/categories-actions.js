@@ -1,3 +1,4 @@
+import localforage from 'localforage';
 import { airtableFetch } from '../../utils/airtable';
 import createMarker from '../../utils/create-marker';
 
@@ -11,6 +12,11 @@ export const setCategories = payload => ({
 
 export const fetchCategories = isOpen => {
   return dispatch => {
+    localforage.getItem('categories', (err, value) => {
+      const payload = JSON.parse(value);
+      if (!err && payload.length > 0) dispatch(setCategories(payload));
+    });
+
     airtableFetch('Categories').then(data => {
       const payload = data
         .filter(i => i.fields.name !== undefined)
@@ -28,6 +34,7 @@ export const fetchCategories = isOpen => {
 
           return item;
         });
+      localforage.setItem('categories', JSON.stringify(payload));
       dispatch(setCategories(payload));
     });
   };

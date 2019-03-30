@@ -16,6 +16,7 @@
     "immer": "^2.1.4",
     "leaflet": "^1.4.0",
     "leaflet-fa-markers": "^0.0.5",
+    "localforage": "^1.7.3",
     "mapbox-gl": "^0.53.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.4",

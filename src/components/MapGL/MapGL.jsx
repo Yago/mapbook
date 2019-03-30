@@ -22,8 +22,8 @@ const MapGL = ({ categories, interactions, points }) => {
     map.current = new mapboxgl.Map({
       container: 'map',
       style: mapConfig.styles[interactions.currentLayer],
-      center: [7.84956, 46.57591],
-      zoom: 7,
+      center: [6.82713, 46.57167],
+      zoom: 9,
     });
 
     const nav = new mapboxgl.NavigationControl({
