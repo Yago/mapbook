@@ -1,6 +1,5 @@
 import localforage from 'localforage';
 import { airtableFetch } from '../../utils/airtable';
-import createMarker from '../../utils/create-marker';
 
 export const SET_CATEGORIES = 'SET_CATEGORIES';
 export const TOGGLE_ACTIVE = 'TOGGLE_ACTIVE';
@@ -23,16 +22,8 @@ export const fetchCategories = isOpen => {
         .filter(i => i.fields.name !== undefined)
         .map(i => {
           const item = { ...i };
-          item.marker = createMarker(
-            item.fields.color,
-            item.fields.background,
-            item.fields.icon,
-          );
-
           item.active =
             item.fields.checked || !item.fields.checked === undefined;
-          item.points = [];
-
           return item;
         });
       localforage.setItem('categories', JSON.stringify(payload));

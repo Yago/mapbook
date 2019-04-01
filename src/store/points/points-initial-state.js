@@ -1,5 +1,5 @@
 const initialState = {
-  collection: [],
+  geojson: {},
 };
 
 export default initialState;
