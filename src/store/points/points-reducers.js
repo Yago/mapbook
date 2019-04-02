@@ -6,16 +6,22 @@ import initialState from './points-initial-state';
 export default p((state = initialState, action) => {
   switch (action.type) {
     case SET_POINTS:
-      state.geojson = action.payload;
+      state.collection = action.payload;
+      state.geojson.features = action.payload.filter(
+        item => item.properties.active,
+      );
       break;
 
     case TOGGLE_ACTIVE:
-      state.geojson = state.geojson.map(item => {
-        if (item.fields.category[0] === action.payload.id) {
-          item.active = !action.payload.active;
+      state.collection = state.collection.map(item => {
+        if (item.properties.category === action.payload.id) {
+          item.properties.active = !action.payload.active;
         }
         return item;
       });
+      state.geojson.features = state.collection.filter(
+        feature => feature.properties.active,
+      );
       break;
 
     default:

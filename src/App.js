@@ -28,7 +28,7 @@ const App = ({ categories, fetchCategories, points, fetchPoints }) => {
   // Get initial points geojson using categories collection
   useEffect(() => {
     if (
-      points.geojson.features === undefined &&
+      points.geojson.features.length <= 0 &&
       categories.collection.length > 0
     ) {
       fetchPoints(categories);

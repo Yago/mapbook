@@ -40,13 +40,13 @@ export const fetchPoints = categories => {
     localforage.getItem('points', (err, value) => {
       const payload = JSON.parse(value);
 
-      if (!err && payload !== null && payload.features.length > 0) {
+      if (!err && payload !== null && payload.length > 0) {
         dispatch(setPoints(payload));
       }
     });
 
     airtableFetch('Points').then(data => {
-      const features = data
+      const payload = data
         .filter(i => i.fields.latitude !== undefined)
         .sort((a, b) => b.fields.latitude - a.fields.latitude)
         .map(point => {
@@ -60,6 +60,7 @@ export const fetchPoints = categories => {
               title: point.fields.title,
               description: point.fields.description,
               images: point.fields.images,
+              category: category.id,
               active: category.active,
               marker: `marker-${category.fields.slug}`,
               popupContent: popupContent(point),
@@ -71,13 +72,8 @@ export const fetchPoints = categories => {
           };
         });
 
-      const payload = {
-        type: 'FeatureCollection',
-        features,
-      };
-
       localforage.setItem('points', JSON.stringify(payload));
-      // dispatch(setPoints(payload));
+      dispatch(setPoints(payload));
     });
   };
 };

@@ -1,5 +1,9 @@
 const initialState = {
-  geojson: {},
+  geojson: {
+    type: 'FeatureCollection',
+    features: [],
+  },
+  collection: [],
 };
 
 export default initialState;
