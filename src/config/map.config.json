@@ -89,7 +89,7 @@
     }
   },
   "unclustered-points": {
-    "id": "unclustered-point",
+    "id": "unclustered-points",
     "type": "symbol",
     "source": "points",
     "filter": ["!has", "point_count"],

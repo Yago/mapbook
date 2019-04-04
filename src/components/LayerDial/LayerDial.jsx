@@ -1,5 +1,4 @@
 /** @jsx jsx */
-import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -57,7 +56,10 @@ const LayerDial = ({ interactions, setLayer }) => {
   );
 };
 
-LayerDial.propTypes = {};
+LayerDial.propTypes = {
+  interactions: PropTypes.object.isRequired,
+  setLayer: PropTypes.func.isRequired,
+};
 LayerDial.defaultProps = {};
 
 const mapState = ({ interactions }) => ({

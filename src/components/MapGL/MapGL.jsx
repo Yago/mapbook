@@ -1,6 +1,5 @@
 /** @jsx jsx */
-import React, { useRef, useEffect, useState } from 'react';
-import { bindActionCreators } from 'redux';
+import { useRef, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { jsx } from '@emotion/core'; // eslint-disable-line
@@ -10,6 +9,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 import styles from './MapGL.styles';
 import mapConfig from '../../config/map.config.json';
+import popupContent from '../../utils/popup-content';
 
 const MapGL = ({ categories, interactions, points }) => {
   const map = useRef(null);
@@ -19,6 +19,8 @@ const MapGL = ({ categories, interactions, points }) => {
   // Initiate Map
   useEffect(() => {
     setCurrentLayer(interactions.currentLayer);
+
+    // Init map instance
     map.current = new mapboxgl.Map({
       container: 'map',
       style: mapConfig.styles[interactions.currentLayer],
@@ -26,9 +28,8 @@ const MapGL = ({ categories, interactions, points }) => {
       zoom: 9,
     });
 
-    const nav = new mapboxgl.NavigationControl({
-      showZoom: false,
-    });
+    // Add native controls
+    const nav = new mapboxgl.NavigationControl({ showZoom: false });
     map.current.addControl(nav, 'top-right');
     map.current.addControl(
       new mapboxgl.GeolocateControl({
@@ -39,6 +40,7 @@ const MapGL = ({ categories, interactions, points }) => {
       }),
     );
 
+    // Inject cluster image
     if (!map.current.hasImage('cluster-img')) {
       map.current.loadImage('/cluster.png', (err, image) => {
         if (err) throw err;
@@ -46,7 +48,7 @@ const MapGL = ({ categories, interactions, points }) => {
       });
     }
 
-    // inspect a cluster on click
+    // Define cluster click event -> zoom
     map.current.on('click', 'clusters', function(e) {
       const features = map.current.queryRenderedFeatures(e.point, {
         layers: ['clusters'],
@@ -64,16 +66,34 @@ const MapGL = ({ categories, interactions, points }) => {
         });
     });
 
-    map.current.on('mouseenter', 'clusters', function() {
+    // Define point click event -> open popup
+    map.current.on('click', 'unclustered-points', e => {
+      const point = e.features[0];
+
+      new mapboxgl.Popup()
+        .setLngLat(point.geometry.coordinates.slice())
+        .setHTML(popupContent(point))
+        .addTo(map.current);
+    });
+
+    // Set proper hover cursor
+    map.current.on('mouseenter', 'clusters', () => {
       map.current.getCanvas().style.cursor = 'pointer';
     });
-    map.current.on('mouseleave', 'clusters', function() {
+    map.current.on('mouseleave', 'clusters', () => {
+      map.current.getCanvas().style.cursor = '';
+    });
+    map.current.on('mouseenter', 'unclustered-points', () => {
+      map.current.getCanvas().style.cursor = 'pointer';
+    });
+    map.current.on('mouseleave', 'unclustered-points', () => {
       map.current.getCanvas().style.cursor = '';
     });
 
     // map.current.on('load', () => map.current.resize());
   }, []);
 
+  // Inject categories marker images
   useEffect(() => {
     if (categories.collection.length > 0) {
       categories.collection.forEach(category => {
@@ -91,23 +111,27 @@ const MapGL = ({ categories, interactions, points }) => {
     }
   }, [categories]);
 
-  // Update points on Map when active state change
+  // Update Map layers when points.geojson updates
   useEffect(() => {
-    if (points.geojson.features && points.geojson.features.length > 0) {
-      if (map.current.getSource('points') !== undefined) {
-        map.current.getSource('points').setData(points.geojson);
-      } else {
-        map.current.on('load', () => {
-          map.current.addSource('points', {
-            type: 'geojson',
-            data: points.geojson,
-            cluster: true,
-            clusterMaxZoom: 14,
-            clusterRadius: 50,
-          });
-          map.current.addLayer(mapConfig['unclustered-points']);
-          map.current.addLayer(mapConfig.clusters);
+    if (map.current.loaded()) {
+      if (map.current.getSource('points') === undefined) {
+        map.current.addSource('points', {
+          type: 'geojson',
+          data: points.geojson,
+          cluster: true,
+          clusterMaxZoom: 14,
+          clusterRadius: 50,
         });
+      } else {
+        map.current.getSource('points').setData(points.geojson);
+      }
+
+      if (points.geojson.features.length <= 0) {
+        map.current.removeLayer('unclustered-points');
+        map.current.removeLayer('clusters');
+      } else if (map.current.getLayer('clusters') === undefined) {
+        map.current.addLayer(mapConfig['unclustered-points']);
+        map.current.addLayer(mapConfig.clusters);
       }
     }
   }, [points]);
@@ -139,6 +163,7 @@ const MapGL = ({ categories, interactions, points }) => {
 
 MapGL.propTypes = {
   categories: PropTypes.object.isRequired,
+  interactions: PropTypes.object.isRequired,
   points: PropTypes.object.isRequired,
 };
 MapGL.defaultProps = {};

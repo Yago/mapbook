@@ -1,5 +1,5 @@
 import p from 'immer';
-import { SET_CATEGORIES, TOGGLE_ACTIVE } from './categories-actions';
+import { SET_CATEGORIES, TOGGLE_ACTIVE_CATEGORIES } from './categories-actions';
 
 import initialState from './categories-initial-state';
 
@@ -9,7 +9,7 @@ export default p((state = initialState, action) => {
       state.collection = action.payload;
       break;
 
-    case TOGGLE_ACTIVE:
+    case TOGGLE_ACTIVE_CATEGORIES:
       state.collection = state.collection.map(item => {
         if (item.id === action.payload.id) item.active = !action.payload.active;
         return item;

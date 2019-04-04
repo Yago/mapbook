@@ -2,7 +2,7 @@ import localforage from 'localforage';
 import { airtableFetch } from '../../utils/airtable';
 
 export const SET_CATEGORIES = 'SET_CATEGORIES';
-export const TOGGLE_ACTIVE = 'TOGGLE_ACTIVE';
+export const TOGGLE_ACTIVE_CATEGORIES = 'TOGGLE_ACTIVE_CATEGORIES';
 
 export const setCategories = payload => ({
   type: SET_CATEGORIES,
@@ -11,12 +11,14 @@ export const setCategories = payload => ({
 
 export const fetchCategories = isOpen => {
   return dispatch => {
+    // Fetch from IndexedDB
     localforage.getItem('categories', (err, value) => {
       const payload = JSON.parse(value);
       if (!err && payload !== null && payload.length > 0)
         dispatch(setCategories(payload));
     });
 
+    // Fetch from Airtable
     airtableFetch('Categories').then(data => {
       const payload = data
         .filter(i => i.fields.name !== undefined)
@@ -33,13 +35,13 @@ export const fetchCategories = isOpen => {
 };
 
 export const toggleCategoriesActive = category => ({
-  type: TOGGLE_ACTIVE,
+  type: TOGGLE_ACTIVE_CATEGORIES,
   payload: category,
 });
 
 export default {
   SET_CATEGORIES,
-  TOGGLE_ACTIVE,
+  TOGGLE_ACTIVE_CATEGORIES,
   setCategories,
   fetchCategories,
   toggleCategoriesActive,

@@ -43,7 +43,7 @@ export default css`
     font-size: 16px;
     font-family: 'Noto Sans', Helvetica, Arial, sans-serif;
 
-    h2:first-child {
+    h2:first-of-type {
       padding-right: 70px;
     }
 

@@ -1,5 +1,5 @@
 import p from 'immer';
-import { SET_POINTS, TOGGLE_ACTIVE } from './points-actions';
+import { SET_POINTS, TOGGLE_ACTIVE_POINTS } from './points-actions';
 
 import initialState from './points-initial-state';
 
@@ -12,7 +12,7 @@ export default p((state = initialState, action) => {
       );
       break;
 
-    case TOGGLE_ACTIVE:
+    case TOGGLE_ACTIVE_POINTS:
       state.collection = state.collection.map(item => {
         if (item.properties.category === action.payload.id) {
           item.properties.active = !action.payload.active;

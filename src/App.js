@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -20,6 +20,8 @@ const muiTheme = createMuiTheme({
 });
 
 const App = ({ categories, fetchCategories, points, fetchPoints }) => {
+  const [isInitial, setIsInitial] = useState(true);
+
   // Get initial categories collection
   useEffect(() => {
     if (categories.collection.length <= 0) fetchCategories();
@@ -28,10 +30,12 @@ const App = ({ categories, fetchCategories, points, fetchPoints }) => {
   // Get initial points geojson using categories collection
   useEffect(() => {
     if (
+      isInitial &&
       points.geojson.features.length <= 0 &&
       categories.collection.length > 0
     ) {
       fetchPoints(categories);
+      setIsInitial(false);
     }
   }, [categories]);
 

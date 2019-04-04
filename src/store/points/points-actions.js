@@ -1,34 +1,9 @@
-import mapboxgl from 'mapbox-gl';
 import localforage from 'localforage';
-import { OpenLocationCode } from 'open-location-code';
 
 import { airtableFetch } from '../../utils/airtable';
 
 export const SET_POINTS = 'SET_POINTS';
-export const TOGGLE_ACTIVE = 'TOGGLE_ACTIVE';
-
-const popupContent = point => {
-  const openLocation = new OpenLocationCode();
-  const plusCode = openLocation.encode(
-    point.fields.latitude,
-    point.fields.longitude,
-  );
-
-  return `
-    <div class="mapboxgl-popup-content-inner">
-      ${point.fields.title ? `<h2>${point.fields.title}</h2>` : ''}
-      <pre>${plusCode}</pre>
-      ${point.fields.description || ''}
-      ${
-        point.fields.images && point.fields.images.length > 0
-          ? point.fields.images.map(
-              img => `<img src="${img.thumbnails.large.url}" />`,
-            )
-          : ''
-      }
-    </div>
-  `;
-};
+export const TOGGLE_ACTIVE_POINTS = 'TOGGLE_ACTIVE_POINTS';
 
 export const setPoints = payload => ({
   type: SET_POINTS,
@@ -37,6 +12,7 @@ export const setPoints = payload => ({
 
 export const fetchPoints = categories => {
   return dispatch => {
+    // Fetch from IndexedDB
     localforage.getItem('points', (err, value) => {
       const payload = JSON.parse(value);
 
@@ -45,6 +21,7 @@ export const fetchPoints = categories => {
       }
     });
 
+    // Fetch from Airtable
     airtableFetch('Points').then(data => {
       const payload = data
         .filter(i => i.fields.latitude !== undefined)
@@ -54,6 +31,7 @@ export const fetchPoints = categories => {
             i => i.id === point.fields.category[0],
           );
 
+          // Apply GEOJSON format to point
           return {
             type: 'Feature',
             properties: {
@@ -63,7 +41,6 @@ export const fetchPoints = categories => {
               category: category.id,
               active: category.active,
               marker: `marker-${category.fields.slug}`,
-              popupContent: popupContent(point),
             },
             geometry: {
               type: 'Point',
@@ -79,12 +56,13 @@ export const fetchPoints = categories => {
 };
 
 export const togglePointActive = category => ({
-  type: TOGGLE_ACTIVE,
+  type: TOGGLE_ACTIVE_POINTS,
   payload: category,
 });
 
 export default {
   SET_POINTS,
+  TOGGLE_ACTIVE_POINTS,
   setPoints,
   fetchPoints,
   togglePointActive,

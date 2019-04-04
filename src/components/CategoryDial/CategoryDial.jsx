@@ -1,5 +1,4 @@
 /** @jsx jsx */
-import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -73,7 +72,14 @@ const CategoryDial = ({
   );
 };
 
-CategoryDial.propTypes = {};
+CategoryDial.propTypes = {
+  categories: PropTypes.object.isRequired,
+  points: PropTypes.object.isRequired,
+  interactions: PropTypes.object.isRequired,
+  toggleCategoriesActive: PropTypes.func.isRequired,
+  togglePointActive: PropTypes.func.isRequired,
+  toggleDial: PropTypes.func.isRequired,
+};
 CategoryDial.defaultProps = {};
 
 const mapState = ({ categories, points, interactions }) => ({
