@@ -39,28 +39,28 @@
     "satelite" : {
       "version": 8,
       "sources": {
-        "satelite-map": {
-          "type": "raster",
-          "tiles": [
-            "https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg"
-          ],
-          "tileSize": 128
-        },
         "swiss-pedestrian": {
           "type": "raster",
           "tiles": [
             "https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.swisstlm3d-wanderwege/default/current/3857/{z}/{x}/{y}.png"
           ],
           "tileSize": 128
+        },
+        "esri-imagery": {
+          "type": "raster",
+          "tiles": [
+            "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          ],
+          "tileSize": 128
         }
       },
       "layers": [
         {
-          "id": "satelite-map",
+          "id": "esri-imagery",
           "type": "raster",
-          "source": "satelite-map",
+          "source": "esri-imagery",
           "minzoom": 0,
-          "maxzoom": 22
+          "maxzoom": 17
         },
         {
           "id": "swiss-pedestrian",
