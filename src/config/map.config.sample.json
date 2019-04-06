@@ -1,0 +1,53 @@
+{
+  "styles": {
+    "basemap": "Could be a .json url to Mapbox/Maptiler",
+    "style-number-2" : {
+      "version": 8,
+      "sources": {
+        "custom-raster": {
+          "type": "raster",
+          "tiles": [
+            "or a classic raster source /{z}/{x}/{y}.xyz"
+          ],
+          "tileSize": 128
+        }
+      },
+      "layers": [
+        {
+          "id": "custom-raster",
+          "type": "raster",
+          "source": "custom-raster",
+          "minzoom": 0,
+          "maxzoom": 22
+        }
+      ]
+    }
+  },
+  "clusters": {
+    "id": "clusters",
+    "filter": ["has", "point_count"],
+    "type": "symbol",
+    "source": "points",
+    "layout": {
+      "icon-image": "cluster-img",
+      "icon-size": 0.35,
+      "text-field": "{point_count_abbreviated}",
+      "text-font": ["Open Sans Bold", "Arial Unicode MS Regular"],
+      "text-size": 12
+    },
+    "paint": {
+      "text-color": "#fff"
+    }
+  },
+  "unclustered-points": {
+    "id": "unclustered-points",
+    "type": "symbol",
+    "source": "points",
+    "filter": ["!has", "point_count"],
+    "layout": {
+      "icon-image": "{marker}",
+      "icon-size": 0.33,
+      "icon-anchor": "bottom"
+    }
+  }
+}

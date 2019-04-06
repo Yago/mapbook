@@ -10,6 +10,9 @@
 firebase.json
 .firebase
 
+# Config
+src/config/map.config.json
+
 # testing
 /coverage
 
