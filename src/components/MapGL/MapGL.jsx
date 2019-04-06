@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { useRef, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import { jsx } from '@emotion/core'; // eslint-disable-line
 import mapboxgl from 'mapbox-gl';
@@ -138,9 +139,35 @@ const MapGL = ({ categories, interactions, points }) => {
 
   // Switch base Map layer
   useEffect(() => {
-    if (interactions.currentLayer !== currentLayer) {
-      map.current.setStyle(mapConfig.styles[interactions.currentLayer]);
-      setCurrentLayer(interactions.currentLayer);
+    if (interactions.currentLayer !== currentLayer && map.current.loaded()) {
+      const asyncSwitcher = async () => {
+        const oldStyle = map.current.getStyle();
+        const oldLayers = oldStyle.layers.filter(
+          l => l.id === 'clusters' || l.id === 'unclustered-points',
+        );
+
+        // Retrieve new style
+        let newStyle = mapConfig.styles[interactions.currentLayer];
+        if (typeof newStyle === 'string' && newStyle.includes('.json')) {
+          newStyle = await axios.get(newStyle).then(res => res.data);
+        }
+
+        // Keep not style related layers and sources
+        const style = {
+          ...oldStyle,
+          ...newStyle,
+        };
+        style.layers = [...style.layers, ...oldLayers];
+        style.sources = {
+          ...style.sources,
+          points: oldStyle.sources.points,
+        };
+
+        // Apply new style
+        map.current.setStyle(style);
+        setCurrentLayer(interactions.currentLayer);
+      };
+      asyncSwitcher();
     }
   }, [interactions]);
 
