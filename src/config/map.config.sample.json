@@ -1,4 +1,15 @@
 {
+  "airtable": {
+    "key": "XXXXXXXXXXXXXXXX",
+    "categories": {
+      "table_id": "XXXXXXXXXXXXXXXX",
+      "table_name": "Categories"
+    },
+    "points": { // Can be an array of objects
+      "table_id": "XXXXXXXXXXXXXXXX",
+      "table_name": "Points"
+    }
+  },
   "styles": {
     "basemap": "Could be a .json url to Mapbox/Maptiler",
     "style-number-2" : {

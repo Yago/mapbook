@@ -1,5 +1,6 @@
 import localforage from 'localforage';
 import { airtableFetch } from '../../utils/airtable';
+import mapConfig from '../../config/map.config.json';
 
 export const SET_CATEGORIES = 'SET_CATEGORIES';
 export const TOGGLE_ACTIVE_CATEGORIES = 'TOGGLE_ACTIVE_CATEGORIES';
@@ -19,7 +20,8 @@ export const fetchCategories = isOpen => {
     });
 
     // Fetch from Airtable
-    airtableFetch('Categories').then(data => {
+    const { table_key, table_name } = mapConfig.airtable.categories;
+    airtableFetch(table_key, table_name).then(data => {
       const payload = data
         .filter(i => i.fields.name !== undefined)
         .map(i => {

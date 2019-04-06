@@ -1,18 +1,19 @@
 import axios from 'axios';
+import mapConfig from '../config/map.config.json';
 
 export const airtableFetch = (
-  type,
+  id,
+  name,
   offset = null,
   data = [],
   resolver = null,
 ) => {
-  const key = process.env.REACT_APP_AIRTABLE_KEY;
-  const table = process.env.REACT_APP_AIRTABLE_TABLE;
+  const key = mapConfig.airtable.key;
 
   return new Promise((resolve, reject) => {
     axios({
       method: 'get',
-      url: `https://api.airtable.com/v0/${table}/${type}?${
+      url: `https://api.airtable.com/v0/${id}/${name}?${
         offset ? `&offset=${offset}` : ''
       }`,
       headers: {
@@ -22,7 +23,13 @@ export const airtableFetch = (
       .then(res => {
         const newData = [...data, ...res.data.records];
         if (res.data.offset) {
-          airtableFetch(type, res.data.offset, newData, resolver || resolve);
+          airtableFetch(
+            id,
+            name,
+            res.data.offset,
+            newData,
+            resolver || resolve,
+          );
         } else {
           if (resolver) resolver(newData);
           resolve(newData);

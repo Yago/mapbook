@@ -1,6 +1,6 @@
 import localforage from 'localforage';
-
 import { airtableFetch } from '../../utils/airtable';
+import mapConfig from '../../config/map.config.json';
 
 export const SET_POINTS = 'SET_POINTS';
 export const TOGGLE_ACTIVE_POINTS = 'TOGGLE_ACTIVE_POINTS';
@@ -22,13 +22,33 @@ export const fetchPoints = categories => {
     });
 
     // Fetch from Airtable
-    airtableFetch('Points').then(data => {
+    let airtablePromise = null;
+    if (Array.isArray(mapConfig.airtable.points)) {
+      const airtablePromises = mapConfig.airtable.points.map(point => {
+        const { table_key, table_name } = point;
+        return airtableFetch(table_key, table_name);
+      });
+      airtablePromise = Promise.all(airtablePromises);
+    } else {
+      const { table_key, table_name } = mapConfig.airtable.points;
+      airtablePromise = airtableFetch(table_key, table_name);
+    }
+
+    airtablePromise.then(res => {
+      const data = Array.isArray(res[0])
+        ? res.reduce((acc, val) => [...acc, ...val], [])
+        : res;
+
       const payload = data
-        .filter(i => i.fields.latitude !== undefined)
+        .filter(i => i.fields !== undefined && i.fields.latitude !== undefined)
         .sort((a, b) => b.fields.latitude - a.fields.latitude)
         .map(point => {
+          const pointCategory =
+            typeof point.fields.category === 'string'
+              ? point.fields.category
+              : point.fields.category[0];
           const category = categories.collection.find(
-            i => i.id === point.fields.category[0],
+            i => i.id === pointCategory,
           );
 
           // Apply GEOJSON format to point

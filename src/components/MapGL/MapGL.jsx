@@ -114,7 +114,7 @@ const MapGL = ({ categories, interactions, points }) => {
 
   // Update Map layers when points.geojson updates
   useEffect(() => {
-    if (map.current.loaded()) {
+    const updateLayers = () => {
       if (map.current.getSource('points') === undefined) {
         map.current.addSource('points', {
           type: 'geojson',
@@ -127,13 +127,22 @@ const MapGL = ({ categories, interactions, points }) => {
         map.current.getSource('points').setData(points.geojson);
       }
 
-      if (points.geojson.features.length <= 0) {
+      if (
+        points.geojson.features.length <= 0 &&
+        map.current.getLayer('clusters') !== undefined
+      ) {
         map.current.removeLayer('unclustered-points');
         map.current.removeLayer('clusters');
       } else if (map.current.getLayer('clusters') === undefined) {
         map.current.addLayer(mapConfig['unclustered-points']);
         map.current.addLayer(mapConfig.clusters);
       }
+    };
+
+    if (map.current.loaded()) {
+      updateLayers();
+    } else {
+      map.current.on('load', () => updateLayers());
     }
   }, [points]);
 
