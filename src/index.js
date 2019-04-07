@@ -1,14 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 
+import App from './App';
+import Auth from './components/Auth';
+import * as serviceWorker from './serviceWorker';
 import store from './store';
+import authConfig from './config/auth.config.json';
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    {authConfig.useAuth ? (
+      <Auth>
+        <App />
+      </Auth>
+    ) : (
+      <App />
+    )}
   </Provider>,
   document.getElementById('root'),
 );

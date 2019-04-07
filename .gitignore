@@ -11,6 +11,7 @@ firebase.json
 .firebase
 
 # Config
+src/config/auth.config.json
 src/config/map.config.json
 
 # testing

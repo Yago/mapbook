@@ -1,0 +1,9 @@
+{
+  "useAuth": true,
+  "firebase": {
+    "apiKey": "XXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "projectId": "PROJECTID",
+    "databaseURL": "https://PROJECTID.firebaseio.com",
+    "authDomain": "DOMAIN"
+  }
+}
