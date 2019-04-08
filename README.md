@@ -25,7 +25,7 @@ $ yarn install
 	* `latitude` (number)
 	* `longitude` (number)
 	* `description` (long text) : you can use HTML here
-	* `images` (attachment)
+	* `images` (attachment)
 	* `category` (single relation)
 
 ![Points table](./doc/points.png)
@@ -59,7 +59,7 @@ $ cp src/config/auth.config.sample.json src/config/auth.config.json
 
 `map.config.json` is mainly based on [Mapbox Style Specification](https://docs.mapbox.com/mapbox-gl-js/style-spec/) :
 
-```json
+```plain
 {
   "airtable": {                 ← Your Airtable credentials
     "key": "XXXXXXXXXXXXXXXX",
@@ -80,7 +80,7 @@ $ cp src/config/auth.config.sample.json src/config/auth.config.json
 
 `auth.config.json` is used if you want to use Firebase auth system :
 
-```json
+```plain
 {
   "useAuth": true,              ← False if you don't want auth in the app
   "firebase": {...}             ← Your Firebase credentials
