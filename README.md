@@ -1,68 +1,108 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Mapbook
 
-## Available Scripts
+**Mapbook** a *map application blueprint* based on [React](https://reactjs.org), [Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js/)  and [Airtable](https://airtable.com). It offers a simple way to manage your points/categories and  to display it in a nice, performant and responsive map interface.
 
-In the project directory, you can run:
+![screenshot](./doc/screenshot.png)
 
-### `npm start`
+## Installation
+First of all, you need to have the following tools installed globally on your environment:
+- [📗 NodeJS 10+](https://nodejs.org/en/) - JavaScript runtime used to build the project
+- [🐈 Yarn](https://yarnpkg.com/lang/en/) - Dependency manager built on top of the NPM registry
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Then, you can install the dependencies :
+```bash
+$ cd path/to/project
+$ yarn install
+```
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+### Airtable setup
+**Airtable** is used here as the main data system because of its very simple usage and the out the box JSON REST API that came with. So you will need to create **2 tables** (recommended in the same base). To ease the process, simply use **[this template](https://airtable.com/shr7ZaCBdM4hb5xdk)** and use the `Copy base` button in the **top-right corner**.
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* `Points` : which will contain all your points related data
+	* `title` (string)
+	* `latitude` (number)
+	* `longitude` (number)
+	* `description` (long text) : you can use HTML here
+	* `images` (attachment)
+	* `category` (single relation)
 
-### `npm run build`
+![Points table](./doc/points.png)
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+* `Categories` : which will contain the category description
+	* `name` (string)
+	* `slug` (string)
+	* `marker` (attachment) : your marker image
+	* `width` (number) : the marker image width
+	*  `height` (number) : the marker image height
+	* `icon` (string) : should be the same icon CSS classes as the image ([FontAwesome 5](https://fontawesome.com) in the example)
+	* `color` (string) : hex color of the icon
+	* `background` (string) : hex color of the background
+	* `Points` (multiple relations) : automatic points relations
+	* `checked` (boolean) : define if its points are displayed by default
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+![Categories table](./doc/categories.png)
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+With the [free plan](https://airtable.com/pricing), you can have up to 1200 records in your base. If, for some reason, you need more, you can subscribe to their *Plus* or *Pro* plan (great products) and if you're still just a broken student, **you can use multiple bases**. Now because relation doesn't work across Airtable bases, instead of a `category` relation field, you need to turn it into a simple `string` field and use the targeted `category` **id** : can be found in the API documentation (`https://airtable.com/YOU_TABLE_ID/api/docs#curl/table:categories`)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Local configuration
+You will also need to duplicate and edit the configuration samples :
+```bash
+$ cp src/config/map.config.sample.json src/config/map.config.json
+$ cp src/config/auth.config.sample.json src/config/auth.config.json
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+`map.config.json` is mainly based on [Mapbox Style Specification](https://docs.mapbox.com/mapbox-gl-js/style-spec/) :
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```json
+{
+  "airtable": {                 ← Your Airtable credentials
+    "key": "XXXXXXXXXXXXXXXX",
+    "categories": {...},
+    "points": {...}             ← Can also be an array of objects for 
+                                  multiple Airtable bases use
+  },
+  
+  "styles": {...},              ← Your styles objects made of sources
+                                  and layers for map switching
+	
+  "clusters": {...},            ← The cluster configuration
+  "unclustered-points": {...}   ← Map's markers configuration
+}
+```
 
-## Learn More
+👉 You can find great vector styles on [Mapbox](https://www.mapbox.com/) and/or [Maptiler](https://www.maptiler.com/).
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+`auth.config.json` is used if you want to use Firebase auth system :
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```json
+{
+  "useAuth": true,              ← False if you don't want auth in the app
+  "firebase": {...}             ← Your Firebase credentials
+}
+```
 
-### Code Splitting
+### Layers preview
+Depending of your `styles` configuration, if you want a preview for the LayerDial, you can generate and add them to `src/assets` using the style's name as the filename. See existing examples.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+## Run and build
+**Mapbook** is based on [Create React App](https://github.com/facebookincubator/create-react-app), so the commands are pretty straightforward : 
 
-### Analyzing the Bundle Size
+```bash
+$ yarn start    ← start the dev server
+$ yarn build    ← build your production assets 
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+## Main resources credits
+* [React](https://reactjs.org)
+* [Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js/)
+* [Airtable](https://airtable.com)
+* [Material-UI](https://material-ui.com/)
+* [FontAwesome 5](https://fontawesome.com)
+* [React-Firebase](https://react-firebase-js.com/)
+* App icon made by [icon 54](https://thenounproject.com/icon54app/)
